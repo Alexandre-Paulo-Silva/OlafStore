@@ -5,6 +5,9 @@ O objetivo deste projeto é servir como **laboratório de vulnerabilidades** par
 
 ---
 
+![Carrinho de Compras](docs/img/loja.png)
+
+
 ## 📌 Objetivos do Projeto
 - Demonstrar vulnerabilidades reais em aplicações web.
 - Mapear cada falha ao framework **MITRE ATT&CK**.
