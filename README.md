@@ -6,6 +6,7 @@ O objetivo deste projeto é servir como **laboratório de vulnerabilidades** par
 ---
 
 ![Carrinho de Compras](docs/img/loja.png)
+![Página Inicial](https://github.com/Alexandre-Paulo-Silva/OlafStore/blob/main/loja.png?raw=true)
 
 
 ## 📌 Objetivos do Projeto
