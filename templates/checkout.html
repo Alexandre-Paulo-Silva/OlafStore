@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Checkout - OlafSec</title>
+  <link rel="stylesheet" href="/static/style.css" />
+   <link rel="stylesheet" href="/static/checkout.css" />
+
+   
+</head>
+<body>
+  <!-- Navbar no mesmo layout original (links à esquerda, ações de usuário à direita) -->
+  <nav>
+    <a href="/">Home</a>
+    <a href="/products">Produtos</a>
+    <a href="/cart">Carrinho</a>
+    <a href="/reviews">Comentários</a>
+    <a href="/upload">Upload</a>
+    <a href="/admin">Admin</a>
+    <a href="/search">Busca</a>
+
+    <div class="spacer"></div>
+
+    {% if session.get('username') %}
+      <span class="user-info">👤 Logado como: {{ session.get('username') }}</span>
+      <a href="/logout">Sair</a>
+    {% else %}
+      <a href="/register">Registrar</a>
+      <a href="/login">Login</a>
+    {% endif %}
+  </nav>
+
+  <div class="container">
+    <h1>Finalizar Compra</h1>
+    <p class="muted">Revise os dados do pedido e informe o método de pagamento.</p>
+
+    <div class="layout">
+      <!-- Formulário principal (coluna esquerda) -->
+      <form class="card" method="post" action="/checkout" id="checkout-form" novalidate>
+        {# Se usar Flask-WTF, inclua o token CSRF: {{ csrf_token() }} #}
+
+        <div class="field">
+          <label for="name">Nome completo</label>
+          <input id="name" name="name" type="text" required autocomplete="name" placeholder="Nome como no cartão">
+        </div>
+
+        <div class="field">
+          <label for="email">E‑mail</label>
+          <input id="email" name="email" type="email" required autocomplete="email" placeholder="seu@exemplo.com">
+        </div>
+
+        <div class="field">
+          <label for="card_number">Número do cartão</label>
+          <input id="card_number" name="card_number" type="tel" inputmode="numeric" maxlength="19" placeholder="1234 5678 9012 3456" required aria-describedby="card-help">
+          <small id="card-help" class="muted">Nunca armazene o número completo em texto puro em produção.</small>
+        </div>
+
+        <div class="row" aria-label="Validade e CVV">
+          <div class="field small">
+            <label for="expiry">Validade (MM/AA)</label>
+            <input id="expiry" name="expiry" type="text" maxlength="5" placeholder="MM/AA" required>
+          </div>
+          <div class="field small">
+            <label for="cvv">CVV</label>
+            <input id="cvv" name="cvv" type="tel" maxlength="4" inputmode="numeric" placeholder="123" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="address">Endereço de cobrança</label>
+          <input id="address" name="address" type="text" placeholder="Rua, número, complemento">
+        </div>
+
+        <div class="field">
+          <label for="notes">Observações</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="Instruções de entrega (opcional)"></textarea>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;margin-top:8px;">
+          <label style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" name="save_card" value="1" aria-label="Salvar método de pagamento">
+            <span class="muted">Salvar método de pagamento (não recomendado em ambiente de teste)</span>
+          </label>
+        </div>
+
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+          <button type="submit" class="btn primary">Pagar agora</button>
+          <a href="/cart" class="btn" role="button">Voltar ao carrinho</a>
+        </div>
+
+        <p class="note">Este é um ambiente de teste. <strong>Nunca</strong> armazene números de cartão em texto puro em produção. Use provedores de pagamento e tokenização.</p>
+      </form>
+
+      <!-- Resumo do pedido (coluna direita) -->
+      <aside class="card" aria-labelledby="summary-title">
+        <h2 id="summary-title">Resumo do pedido</h2>
+
+        <div class="summary-row">
+          <span>Itens</span>
+          <span>{{ cart_items_count | default(0) }}</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>R$ {{ '%.2f' % (cart_total | default(0.0)) }}</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Frete</span>
+          <span>R$ {{ '%.2f' % (shipping | default(0.0)) }}</span>
+        </div>
+
+        <div class="summary-total">
+          <span>Total</span>
+          <strong>R$ {{ '%.2f' % ((cart_total | default(0.0)) + (shipping | default(0.0))) }}</strong>
+        </div>
+
+        <p class="note">Pagamento será processado de forma segura pelo gateway configurado no servidor.</p>
+      </aside>
+    </div>
+  </div>
+
+  <footer>
+    © <span id="current-year"></span> OlafStore — Laboratório de Segurança
+  </footer>
+
+  <script>
+    // Preenche o ano no rodapé (evita depender de funções Jinja não registradas)
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+
+    // Máscara simples e validação leve no cliente
+    (function(){
+      const card = document.getElementById('card_number');
+      const expiry = document.getElementById('expiry');
+      const form = document.getElementById('checkout-form');
+
+      function formatCard(v){
+        return v.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim();
+      }
+      if (card) card.addEventListener('input', e => { e.target.value = formatCard(e.target.value); });
+
+      if (expiry) expiry.addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g,'').slice(0,4);
+        if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
+        e.target.value = v;
+      });
+
+      if (form) form.addEventListener('submit', function(e){
+        // validação básica no cliente
+        if (card && (!card.value || card.value.replace(/\s/g,'').length < 13)){
+          alert('Informe um número de cartão válido.');
+          e.preventDefault();
+          return;
+        }
+        if (expiry && !expiry.value.match(/^\d{2}\/\d{2}$/)){
+          alert('Informe validade no formato MM/AA.');
+          e.preventDefault();
+          return;
+        }
+        var cvv = document.getElementById('cvv');
+        if (cvv && !cvv.value.match(/^\d{3,4}$/)){
+          alert('Informe o CVV (3 ou 4 dígitos).');
+          e.preventDefault();
+          return;
+        }
+        // Observação: o processamento real do cartão deve ocorrer no servidor via gateway.
+      });
+    })();
+  </script>
+</body>
+</html>

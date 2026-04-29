@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OlafSec - Loja Vulnerável</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<nav>
+    <a href="/">Home</a>
+    <a href="/products">Produtos</a>
+    <a href="/cart">Carrinho</a>
+    <a href="/reviews">Comentários</a>
+    <a href="/upload">Upload</a>
+    <a href="/admin">Admin</a>
+    <a href="/search">Busca Produto</a>
+    {% if session.username %}
+        <span class="user-info">👤 Logado como: {{ session.username }}</span>
+        <a href="/logout">Sair</a>
+    {% else %}
+        <a href="/register">Registrar</a>
+        <a href="/login">Login</a>
+    {% endif %}
+</nav>
+
+<header class="hero">
+    <h1>Bem-vindo ao OlafSec!</h1>
+    <p>Um laboratório educacional cheio de vulnerabilidades para estudo.</p>
+    
+    <a href="/products" class="btn">Ver Produtos</a>
+</header>
+
+<section class="highlight">
+    <h2>Produtos em destaque</h2>
+    <div class="product-grid">
+        <div class="product-card">
+            <!--<img src="/img/boneco.png" alt="Boneco Olaf" width="150"> -->
+            <img src="/static/boneco.png" alt="Caneca Frozen" width="150">
+            <h3>Boneco Olaf</h3>
+            <p>Boneco de pelúcia do Olaf</p>
+            <p><strong>R$ 99,90</strong></p>
+        </div>
+        <div class="product-card">
+            <img src="/static/caneca.jpg" alt="Caneca Frozen" width="150">
+            <h3>Caneca Frozen</h3>
+            <p>Caneca temática Frozen</p>
+            <p><strong>R$ 39,90</strong></p>
+        </div>
+
+                <div class="product-card">
+            <img src="/static/mochila.jpg" alt="Caneca Frozen" width="150">
+            <h3>Mochila Frozen</h3>
+            <p>Mochila temática Frozen</p>
+            <p><strong>R$ 39,90</strong></p>
+        </div>
+
+                <div class="product-card">
+            <img src="/static/chaveiro.jpg" alt="Caneca Frozen" width="150">
+            <h3>Chaveiro Frozen</h3>
+            <p>Chaveiro temática Frozen</p>
+            <p><strong>R$ 39,90</strong></p>
+        </div>
+
+                <div class="product-card">
+            <img src="/static/camiseta.jpg" alt="Caneca Frozen" width="150">
+            <h3>Camiseta Frozen</h3>
+            <p>Camiseta temática Frozen</p>
+            <p><strong>R$ 39,90</strong></p>
+        </div>
+
+    </div>
+</section>
+
+
+</html>

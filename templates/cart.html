@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Carrinho - OlafSec</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/cart.css">
+</head>
+<body>
+<nav>
+  <a href="/">Home</a>
+  <a href="/products">Produtos</a>
+  <a href="/cart">Carrinho</a>
+  <a href="/reviews">Comentários</a>
+  <a href="/upload">Upload</a>
+  <a href="/admin">Admin</a>
+  <a href="/search">Busca</a>
+
+  {% if session.get('username') %}
+    <span class="user-info">👤 Logado como: {{ session.get('username') }}</span>
+    <a href="/logout">Sair</a>
+  {% else %}
+    <a href="/register">Registrar</a>
+    <a href="/login">Login</a>
+  {% endif %}
+</nav>
+
+<main>
+  <h2>Seu Carrinho</h2>
+
+  {% if cart and cart|length > 0 %}
+  <table>
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Preço</th>
+        <th>Quantidade</th>
+        <th>Subtotal</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart %}
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>R$ {{ "%.2f"|format(item.price) }}</td>
+        <td>{{ item.quantity }}</td>
+        <td><strong>R$ {{ "%.2f"|format(item.price * item.quantity) }}</strong></td>
+        <td class="actions">
+          <!-- Botão de remover -->
+          <form method="POST" action="/remove_from_cart/{{ item.id }}">
+            <button type="submit" class="btn danger">Remover</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="margin-top:20px; text-align:right;">
+    <a href="/checkout" class="btn primary">Ir para Checkout</a>
+  </div>
+
+  {% else %}
+  <div class="empty">
+    <p>Seu carrinho está vazio.</p>
+    <a href="/products" class="btn primary">Ver Produtos</a>
+  </div>
+  {% endif %}
+</main>
+</body>
+</html>

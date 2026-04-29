@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head><title>Upload - OlafSec</title><link rel="stylesheet" href="/static/style.css"></head>
+<body>
+<nav>
+    <a href="/">Home</a>
+    <a href="/products">Produtos</a>
+    <a href="/cart">Carrinho</a>
+    <a href="/reviews">Comentários</a>
+    <a href="/upload">Upload</a>
+    <a href="/admin">Admin</a>
+    <a href="/search">Busca</a>
+    {% if session.username %}
+        <span class="user-info">👤 Logado como: {{ session.username }}</span>
+        <a href="/logout">Sair</a>
+    {% else %}
+        <a href="/register">Registrar</a>
+        <a href="/login">Login</a>
+    {% endif %}
+</nav>
+
+
+<h2>Enviar Arquivo</h2>
+<form method="POST" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <button type="submit">Enviar</button>
+</form>
+  <footer>
+    © <span id="current-year"></span> OlafStore — Laboratório de Segurança
+  </footer>
+</body>
+</html>

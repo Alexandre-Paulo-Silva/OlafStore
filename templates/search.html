@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Busca - OlafSec</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/search.css" />
+
+</head>
+<body>
+  <!-- Navbar (mesmo layout usado nas outras páginas) -->
+  <nav>
+    <a href="/">Home</a>
+    <a href="/products">Produtos</a>
+    <a href="/cart">Carrinho</a>
+    <a href="/reviews">Comentários</a>
+    <a href="/upload">Upload</a>
+    <a href="/admin">Admin</a>
+    <a href="/search">Busca Produto</a>
+
+    <div class="spacer"></div>
+
+    {% if session.get('username') %}
+      <span class="user-info">👤 {{ session.get('username') }}</span>
+      <a href="/logout">Sair</a>
+    {% else %}
+      <a href="/register">Registrar</a>
+      <a href="/login">Login</a>
+    {% endif %}
+  </nav>
+
+  <div class="container">
+    <header>
+      <h1>Busca de Produtos</h1>
+      <p class="muted">Encontre produtos no OlafSec.</p>
+    </header>
+
+    <form method="GET" action="/search" class="search-bar" role="search" aria-label="Buscar produtos">
+      <input name="q" class="search-input" type="search" placeholder="Buscar por nome, descrição ou categoria" value="{{ request.args.get('q','') }}">
+      <button class="btn" type="submit">Buscar</button>
+    </form>
+
+    {% if products is defined and products %}
+      <section class="results" aria-live="polite">
+        {% for p in products %}
+        <article class="product" role="article">
+          <img src="/static/{{ p.image if p.image is defined else (p[4] if p|length > 4 else 'placeholder.png') }}" alt="{{ p.name if p.name is defined else (p[1] if p|length > 1 else 'Produto') }}">
+          <h3>{{ p.name if p.name is defined else (p[1] if p|length > 1 else 'Produto sem nome') }}</h3>
+          <p class="muted">{{ p.description if p.description is defined else (p[2] if p|length > 2 else '') }}</p>
+          <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center;">
+            <strong>R$ {{ '%.2f' % (p.price if p.price is defined else (p[2] if p|length > 2 else 0.0)) }}</strong>
+            <a class="btn" href="/product/{{ p.id if p.id is defined else (p[0] if p|length > 0 else '#') }}">Ver</a>
+          </div>
+        </article>
+        {% endfor %}
+      </section>
+    {% else %}
+      <div class="card" style="margin-top:18px;">
+        <p class="muted">Nenhum produto encontrado. Tente outro termo de busca.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <footer>
+    © <span id="current-year"></span> OlafStore — Laboratório de Segurança
+  </footer>
+
+  <script>
+    // Preenche o ano no rodapé (evita depender de funções Jinja não registradas)
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Login - OlafSec</title>
+    <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/login.css">
+
+</head>
+<body>
+<nav class="navbar">
+  <a href="/">Home</a>
+  <a href="/products">Produtos</a>
+  <a href="/cart">Carrinho</a>
+  <a href="/reviews">Comentários</a>
+  <a href="/upload">Upload</a>
+  <a href="/admin">Admin</a>
+  <a href="/search">Busca</a>
+
+  {% if session.get('username') %}
+    <span class="user-info">👤 {{ session.get('username') }}</span>
+    <a href="/logout">Sair</a>
+  {% else %}
+    <a href="/register">Registrar</a>
+    <a href="/login" class="active">Login</a>
+  {% endif %}
+</nav>
+
+<main class="login-container">
+  <div class="login-card">
+    <h2>Login</h2>
+    <form method="POST">
+      <div class="field">
+        <label for="username">Usuário</label>
+        <input id="username" type="text" name="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Senha</label>
+        <input id="password" type="password" name="password" required>
+      </div>
+      <button type="submit" class="btn primary">Entrar</button>
+    </form>
+    <p class="muted">Não tem conta? <a href="/register">Registrar</a></p>
+  </div>
+</main>
+</body>
+</html>
